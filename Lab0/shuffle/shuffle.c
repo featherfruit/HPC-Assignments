@@ -25,13 +25,19 @@ int main(int argc, char *argv[])
 	r = atoi(argv[1]);
 	c = atoi(argv[2]);
 
-	int **matrix = (int**)malloc(c*sizeof(int*));
-		for(int i = 0; i < r; i++)
-			matrix[i] = malloc(sizeof(int)*c);
-
 	//function prototypes
+	srand( time(NULL) );
 	void shufflerc (int **,int,int,char,int,int);
 	void writeToFile(FILE*, int**, int, int);
+
+	//to calculate executiontime
+	struct timeval start, end;
+	//start of execution
+	gettimeofday(&start, NULL);
+
+	int **matrix = (int**)malloc(r*sizeof(int*));
+		for(int i = 0; i < r; i++)
+			matrix[i] = malloc(sizeof(int)*c);
 
 
 	//file handling starts
@@ -43,7 +49,6 @@ int main(int argc, char *argv[])
 	if (fp == NULL)
 		return 0;
 
-	int a;
 	for(int i = 0; i < r; i++)
 	{
 		for(int j = 0; j < c; j++)
@@ -73,11 +78,26 @@ int main(int argc, char *argv[])
 	FILE *outFPtr = fopen(argv[5], "w");
 	writeToFile(outFPtr,matrix, r, c);
 
+	//end of execution
+	gettimeofday(&end, NULL);
+
+	//free matrix to prevent memory leaks?
+	for (int i = 0; i < r; i++)
+	free(matrix[i]);
+	free(matrix);
+
+	//execution time calculation
+	float exec_time = ((end.tv_sec * 1000000 + end.tv_usec) - (start.tv_sec * 1000000 + start.tv_usec));
+	exec_time /= 1000000;
+	printf("Time taken to execute: %fs\n\n", exec_time);
+
 	return 0;  
 
 }
 
 //functions
+
+//function(1)
 void writeToFile(FILE *outFPtr, int **matrix, int r, int c)
 {
 	for(int i = 0; i < r; i++)
@@ -89,8 +109,7 @@ void writeToFile(FILE *outFPtr, int **matrix, int r, int c)
 	}
 }
 
-//function 2 - join the arrays then shuffle it put it back
-
+//function(2) - join the arrays then shuffle it put it back
 void shufflerc(int **matrix,int r, int c, char rcidentifier,int i, int j)
 {
 
